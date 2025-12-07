@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Quote Generator | My Portfolio Project</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Basic Reset and Font Setup */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Container for the whole app */
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            /* Subtle Shadow Effect */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        /* Quote Display Box */
+        .quote-box {
+            margin: 30px 0;
+            padding: 20px;
+            /* Left border accent */
+            border-left: 5px solid #007bff; 
+            background-color: #e9f5ff;
+            border-radius: 8px;
+        }
+
+        .quote-text {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 15px;
+            min-height: 70px; /* Prevents layout shift while loading */
+        }
+
+        .quote-author {
+            font-size: 1rem;
+            color: #007bff;
+            font-weight: 700;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        /* Button Styling */
+        #new-quote-btn {
+            background-color: #28a745; /* Green color */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        #new-quote-btn:hover {
+            background-color: #218838;
+        }
+
+        #new-quote-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Inspirational Quote Generator</h1>
+        
+        <div class="quote-box">
+            <p class="quote-text" id="quote-text">
+                "Click the button below to get an amazing quote!"
+            </p>
+            <p class="quote-author" id="quote-author">
+                - Project Start
+            </p>
+        </div>
+        
+        <button id="new-quote-btn">Get New Quote</button>
+    </div>
+
+    <script>
+        // 1. Select the HTML elements we need to interact with
+        const quoteText = document.getElementById('quote-text');
+        const quoteAuthor = document.getElementById('quote-author');
+        const newQuoteBtn = document.getElementById('new-quote-btn');
+
+        // The API endpoint for a random quote from Quotable
+        const API_URL = 'https://api.quotable.io/random';
+
+        /**
+         * Function to fetch a new quote from the API and update the DOM.
+         */
+        async function getQuote() {
+            // Show a loading state while fetching data
+            quoteText.textContent = "Fetching quote...";
+            quoteAuthor.textContent = "";
+            
+            try {
+                // Use 'fetch' to make the asynchronous API request
+                const response = await fetch(API_URL);
+                
+                // Check if the response was successful
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                // Parse the JSON data from the response
+                const data = await response.json();
+                
+                // Update the HTML elements with the new quote and author
+                quoteText.textContent = `"${data.content}"`;
+                quoteAuthor.textContent = `- ${data.author}`;
+                
+            } catch (error) {
+                // Handle any errors that occur during the fetch process
+                console.error("Could not fetch quote:", error);
+                quoteText.textContent = "Oops! Network error or API failure.";
+                quoteAuthor.textContent = "- Check Console";
+            }
+        }
+
+        // 2. Add an event listener to the button
+        newQuoteBtn.addEventListener('click', getQuote);
+
+        // 3. Fetch a quote immediately when the page loads for the first time
+        getQuote();
+    </script>
+</body>
+</html>
